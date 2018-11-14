@@ -1,0 +1,36 @@
+- hosts: all
+  become: yes
+  vars:
+    docker_images:
+      - name: k8s.gcr.io/hyperkube
+        tag: v1.12.1
+      - name: quay.io/coreos/flannel
+        tag: v0.10.0-amd64
+      - name: coredns/coredns
+        tag: 1.2.2
+      - name: k8s.gcr.io/etcd
+        tag: 3.2.24-1
+      - name: k8s.gcr.io/kubernetes-dashboard-amd64
+        tag: v1.10.0
+      - name: k8s.gcr.io/heapster-amd64
+        tag: v1.5.4
+      - name: gcr.io/kubernetes-helm/tiller
+        tag: v2.11.0
+      - name: quay.io/kubernetes-ingress-controller/nginx-ingress-controller
+        tag: 0.20.0
+  roles:
+    - jumperfly.ansible_common
+    - jumperfly.cfssl
+    - jumperfly.docker
+  tasks:
+    - name: Pull docker images
+      docker_image:
+        name: "{{ item.name }}"
+        tag: "{{ item.tag }}"
+      loop: "{{ docker_images }}"
+      loop_control:
+        label: "{{ item.name }}:{{ item.tag }}"
+    - name: Disable docker service
+      service:
+        name: docker
+        enabled: no
