@@ -15,6 +15,8 @@ Vagrant.configure("2") do |config|
     v.cpus = 1
   end
 
+  config.vm.provision "shell", inline: "swapoff -a"
+
   config.vm.provision "ansible_local" do |ansible|
     ansible.compatibility_mode = "2.0"
     ansible.playbook = "site.yml"
@@ -28,7 +30,6 @@ Vagrant.configure("2") do |config|
     rm -rf /var/cache/yum
     dd if=/dev/zero of=/ZERO bs=1M
     rm /ZERO
-    swapoff /dev/mapper/VolGroup00-LogVol01
     dd if=/dev/zero of=/dev/mapper/VolGroup00-LogVol01 bs=1M
     mkswap /dev/mapper/VolGroup00-LogVol01
     sync

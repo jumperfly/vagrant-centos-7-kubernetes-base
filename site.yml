@@ -22,6 +22,7 @@
     - jumperfly.ansible_common
     - jumperfly.cfssl
     - jumperfly.docker
+    - jumperfly.kubelet
   tasks:
     - name: Pull docker images
       docker_image:
@@ -30,7 +31,10 @@
       loop: "{{ docker_images }}"
       loop_control:
         label: "{{ item.name }}:{{ item.tag }}"
-    - name: Disable docker service
+    - name: Disable installed service
       service:
-        name: docker
+        name: "{{ item }}"
         enabled: no
+      loop:
+        - docker
+        - kubelet
